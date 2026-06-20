@@ -1,6 +1,6 @@
 <div align="center">
 
-[![English](https://img.shields.io/badge/English-README-2f78ff?style=for-the-badge)](./README_EN.md)
+[![English](https://img.shields.io/badge/English-README-2f78ff?style=for-the-badge)](./README.md)
 
 <img src="https://img.shields.io/badge/Node.js-22?logo=nodedotjs&logoColor=fff&color=339933" />
 <img src="https://img.shields.io/badge/Express-22?logo=express&logoColor=fff&color=000000" />
