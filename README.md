@@ -1,99 +1,205 @@
-# 部门综合服务平台
+<div align="center">
 
-全栈导航门户 — 基于 Node.js + Express + SQLite 的轻量级落地中转页系统，支持账号登录管理后台、动态编辑网站标题和导航卡片。
+[![中文](https://img.shields.io/badge/中文-README-red?style=for-the-badge)](./README.md)
 
-## 技术栈
+<img src="https://img.shields.io/badge/Node.js-22?logo=nodedotjs&logoColor=fff&color=339933" />
+<img src="https://img.shields.io/badge/Express-22?logo=express&logoColor=fff&color=000000" />
+<img src="https://img.shields.io/badge/SQLite-22?logo=sqlite&logoColor=fff&color=003B57" />
+<img src="https://img.shields.io/badge/EJS-22?logo=ejs&logoColor=fff&color=B4CA65" />
+<img src="https://img.shields.io/badge/Session_Auth-22?logo=lock&logoColor=fff&color=4B32C3" />
 
-| 层面 | 技术 |
-|------|------|
-| 运行时 | Node.js |
-| 后端框架 | Express |
-| 模板引擎 | EJS |
-| 数据库 | SQLite（better-sqlite3，免安装零配置） |
-| 鉴权 | express-session + bcryptjs |
+<h1>Department Portal</h1>
 
-## 快速开始
+<p>
+  <strong>Full-Stack Navigation Portal</strong><br/>
+  <sub>Node.js + Express + SQLite · Glassmorphism · Zero Config</sub>
+</p>
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+</div>
+
+---
+
+## Introduction
+
+A lightweight landing portal system. Glassmorphism navigation panel on the frontend, with an admin backend for login-protected management of site titles, navigation cards, and custom SVG icons. SQLite database requires zero configuration — start with a single command.
+
+---
+
+## Features
+
+| Feature | Description |
+|:---|:---|
+| Authentication | Session-based auth with bcrypt password hashing |
+| Dynamic Editing | Edit site title & subtitle in admin, instant live update |
+| Card Management | Add / delete / edit navigation cards with sort order |
+| Icon Presets | 20 built-in SVG icons, one-click selection |
+| Custom SVG | Paste any SVG code with real-time preview |
+| 6 Color Themes | Blue / Teal / Purple / Orange / Red / Green |
+| Responsive | 6 → 4 → 2 column auto-adapt, mobile-friendly |
+| Glassmorphism | Frosted glass effect with gradient background |
+| Zero Config | SQLite auto-creates database and tables on first run |
+| Text Marquee | Card names auto-scroll when exceeding container width |
+
+---
+
+## Architecture
+
+```mermaid
+flowchart TB
+    subgraph Browser["Browser"]
+        Landing["Landing Page"]
+        Admin["Admin Panel"]
+    end
+
+    subgraph Server["Express Server"]
+        Auth["Auth Middleware<br/>Session + bcrypt"]
+        Routes["Routes"]
+        EJS["EJS Templates"]
+    end
+
+    subgraph Database["SQLite"]
+        Users["users"]
+        Settings["settings"]
+        Cards["cards"]
+    end
+
+    Landing --> Routes
+    Admin --> Auth
+    Auth --> Routes
+    Routes --> EJS
+    Routes --> Database
+    EJS --> Landing
+    EJS --> Admin
+
+    style Browser fill:#e8f4fd,stroke:#2f78ff,color:#0d1b38
+    style Server fill:#fff8e1,stroke:#f1a625,color:#0d1b38
+    style Database fill:#e8f5e9,stroke:#24ae86,color:#0d1b38
+```
+
+---
+
+## Quick Start
 
 ```bash
-# 1. 安装依赖
+# Install dependencies
 npm install
 
-# 2. 启动服务
+# Start server
 node server.js
 ```
 
-启动后访问：
+| URL | Page |
+|:---|:---|
+| `http://localhost:3000` | Landing Page |
+| `http://localhost:3000/admin` | Admin Panel |
 
-- **前台落地页**：<http://localhost:3000>
-- **管理后台**：<http://localhost:3000/admin>
+**Default Account**
 
-### 默认账号
-
-| 账号 | 密码 |
-|------|------|
+| Username | Password |
+|:---|:---|
 | `admin` | `admin123` |
 
-> 首次启动自动创建数据库文件 `data/portal.db`，并写入预置的 12 张导航卡片。
+> On first run, `data/portal.db` is auto-created with 12 preset navigation cards.
 
-## 功能
+---
 
-### 前台落地页
-- 响应式网格布局，6 / 4 / 2 列自适应
-- 玻璃拟态（Glassmorphism）视觉风格
-- 卡片图标 SVG 动态渲染
-- 卡片名称超出自动滚动显示
-
-### 管理后台
-- **网站设置**：编辑大标题和副标题，保存即时生效
-- **卡片管理**：增删改导航卡片，调整排序权重
-- **图标预设**：内置 20 种 SVG 图标，一键选择
-- **自定义 SVG**：支持粘贴任意 SVG 代码，实时预览
-- **6 色可选**：蓝 / 青 / 紫 / 橙 / 红 / 绿
-
-## 项目结构
+## Project Structure
 
 ```
-落地中转页/
-├── server.js              # Express 主入口（路由 + session + API）
-├── db.js                  # 数据库初始化 + 预置种子数据
-├── auth.js                # 登录鉴权中间件
-├── package.json           # 依赖配置
+department-portal/
+├── server.js              # Express entry point
+├── db.js                  # DB init & seed data
+├── auth.js                # Auth middleware
+├── package.json           # Dependencies
 ├── views/
-│   ├── index.ejs          # 前台落地页模板
+│   ├── index.ejs          # Landing page
 │   └── admin/
-│       ├── _header.ejs    # 后台共用顶部导航
-│       ├── login.ejs      # 登录页
-│       ├── dashboard.ejs  # 管理后台首页
-│       ├── settings.ejs   # 网站设置页
-│       └── cards.ejs      # 卡片管理页
+│       ├── _header.ejs    # Shared admin navbar
+│       ├── login.ejs      # Login page
+│       ├── dashboard.ejs  # Dashboard
+│       ├── settings.ejs   # Site settings
+│       └── cards.ejs      # Card management
 ├── public/
-│   └── admin.css          # 后台通用样式
-└── data/
-    └── portal.db          # SQLite 数据库（自动生成）
+│   └── admin.css          # Admin styles
+├── data/
+│   └── portal.db          # SQLite database (auto-generated)
+├── .gitignore
+├── README.md
+└── README_EN.md
 ```
 
-## 数据库表
+---
 
-| 表名 | 说明 |
-|------|------|
-| `users` | 管理员账号（bcrypt 哈希） |
-| `settings` | 键值对配置（site_title, site_subtitle） |
-| `cards` | 导航卡片（标题、SVG、颜色、链接、排序） |
+## Database
 
-## 路由
+| Table | Fields | Description |
+|:---|:---|:---|
+| `users` | id, username, password_hash | Admin accounts |
+| `settings` | key, value | Key-value config |
+| `cards` | id, title, icon_svg, icon_color, link_url, sort_order | Navigation cards |
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | `/` | 前台落地页 |
-| GET | `/admin/login` | 登录页面 |
-| POST | `/admin/login` | 登录提交 |
-| GET | `/admin/logout` | 退出登录 |
-| GET | `/admin` | 管理后台首页（需登录） |
-| GET/POST | `/admin/settings` | 网站设置（需登录） |
-| GET/POST | `/admin/cards` | 卡片管理（需登录） |
-| POST | `/admin/cards/:id/update` | 更新卡片（需登录） |
-| POST | `/admin/cards/:id/delete` | 删除卡片（需登录） |
+---
+
+## Routes
+
+| Method | Path | Auth | Description |
+|:---|:---|:---|:---|
+| `GET` | `/` | — | Landing page |
+| `GET` | `/admin/login` | — | Login page |
+| `POST` | `/admin/login` | — | Login action |
+| `GET` | `/admin/logout` | — | Logout |
+| `GET` | `/admin` | ✅ | Dashboard |
+| `GET/POST` | `/admin/settings` | ✅ | Site settings |
+| `GET/POST` | `/admin/cards` | ✅ | Card CRUD |
+| `POST` | `/admin/cards/:id/update` | ✅ | Update card |
+| `POST` | `/admin/cards/:id/delete` | ✅ | Delete card |
+
+---
+
+## Tech Choices
+
+| Layer | Choice | Why |
+|:---|:---|:---|
+| Runtime | **Node.js** | Lightweight, vast ecosystem |
+| Framework | **Express** | Minimal, intuitive routing |
+| Template | **EJS** | HTML-like syntax, zero learning curve |
+| Database | **SQLite + better-sqlite3** | Single file, no install, sync API |
+| Auth | **express-session + bcryptjs** | Session persistence, secure hashing |
+| UI | **Glassmorphism** | Modern frosted glass aesthetic |
+
+---
+
+## Preview
+
+```
+┌──────────────────────────────────────────────────────┐
+│  🔔 Notifications    👤 Welcome                       │
+│  ┌────┐  Department Portal                            │
+│  │ 🏛 │  Unified Navigation Platform                   │
+│  └────┘                                              │
+├──────────────────────────────────────────────────────┤
+│                                                      │
+│   ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ │
+│   │ 📁   │ │ 🎓   │ │ 👥   │ │ 💰   │ │ 📦   │ │ 🗄️   │ │
+│   │Office │ │Edu   │ │HR    │ │Finance│ │Assets │ │Data   │ │
+│   └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ │
+│   ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ │
+│   │ 📢   │ │ 📅   │ │ 🧪   │ │ 🏢   │ │ 📂   │ │ 🌐   │ │
+│   │Notice │ │Meeting│ │Lab    │ │Facility│ │Archive│ │Portal │ │
+│   └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ │
+├──────────────────────────────────────────────────────┤
+│     🛡️ Secure · Standard · Efficient · Service  | © 2024 │
+└──────────────────────────────────────────────────────┘
+```
+
+---
+
+<div align="center">
 
 ## License
 
-MIT
+MIT · Free to use, modify, and distribute.
+
+</div>
