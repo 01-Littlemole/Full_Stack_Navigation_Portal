@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>卡片管理 - 管理后台</title>
+  <link rel="stylesheet" href="/public/admin.css" />
+  <style>
+    .layout {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+    .layout > .panel {
+      flex: 1;
+      min-width: 360px;
+    }
+    .layout > .panel:first-child {
+      max-width: 520px;
+    }
+    .icon-colors {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .icon-colors label {
+      cursor: pointer;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      border: 2px solid transparent;
+      transition: all .2s;
+      background: rgba(255,255,255,.5);
+    }
+    .icon-colors input { display: none; }
+    .icon-colors input:checked + label {
+      border-color: var(--blue);
+      background: rgba(47,120,255,.08);
+    }
+    .color-preview-blue { color: #2878f2; }
+    .color-preview-teal { color: #23b9ad; }
+    .color-preview-purple { color: #7560f1; }
+    .color-preview-orange { color: #f1a625; }
+    .color-preview-red { color: #e6505b; }
+    .color-preview-green { color: #24ae86; }
+  </style>
+</head>
+<body>
+  <%- include('_header', { current: 'cards' }) %>
+
+  <div class="admin-main">
+    <% if (locals.success) { %>
+    <div class="alert alert-success">操作成功</div>
+    <% } %>
+    <% if (locals.error) { %>
+    <div class="alert alert-error"><%= error %></div>
+    <% } %>
+
+    <div class="layout">
+      <!-- 编辑表单 -->
+      <div class="panel">
+        <h2><%= editingCard ? '编辑卡片' : '添加卡片' %></h2>
+        <div class="desc">
+          <% if (editingCard) { %>
+          修改卡片信息，SVG 图标可直接粘贴代码。
+          <% } else { %>
+          新增一个前台导航卡片，粘贴 SVG 图标代码即可生效。
+          <% } %>
+        </div>
+
+        <form method="POST" action="<%= editingCard ? '/admin/cards/' + editingCard.id + '/update' : '/admin/cards' %>">
+          <div class="form-group">
+            <label>卡片名称</label>
+            <input type="text" name="title" value="<%= editingCard ? editingCard.title : '' %>" placeholder="例如：办公系统" required />
+          </div>
+
+          <div class="form-group">
+            <label>跳转链接</label>
+            <input type="text" name="link_url" value="<%= editingCard ? editingCard.link_url : '#' %>" placeholder="https:// 或 #" />
+            <div class="hint">留空则默认为 #</div>
+          </div>
+
+          <div class="form-group">
+            <label>排序权重（数字越小越靠前）</label>
+            <input type="number" name="sort_order" value="<%= editingCard ? editingCard.sort_order : '0' %>" />
+          </div>
+
+          <div class="form-group">
+            <label>图标颜色</label>
+            <div class="icon-colors" id="colorPicker">
+              <% var colors = ['blue','teal','purple','orange','red','green']; %>
+              <% var colorNames = { blue:'蓝色', teal:'青色', purple:'紫色', orange:'橙色', red:'红色', green:'绿色' }; %>
+              <% var currentColor = editingCard ? editingCard.icon_color : 'blue'; %>
+              <% colors.forEach(function(c) { %>
+              <input type="radio" name="icon_color" value="<%= c %>" id="color_<%= c %>" <%= currentColor === c ? 'checked' : '' %> />
+              <label for="color_<%= c %>"><span class="color-dot color-preview-<%= c %>"></span><%= colorNames[c] %></label>
+              <% }); %>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>选择预设图标</label>
+            <select id="iconPreset" onchange="loadPresetIcon(this.value)">
+              <option value="">-- 自定义输入（下方粘贴 SVG） --</option>
+              <% iconPresets.forEach(function(icon, idx) { %>
+              <option value="<%= idx %>"><%= icon.name %></option>
+              <% }); %>
+            </select>
+            <div class="hint">选择一个预设图标将自动填入下方 SVG 编辑区，也可以直接在下方面编辑或粘贴自定义 SVG。</div>
+          </div>
+
+          <div class="form-group">
+            <label>SVG 图标代码</label>
+            <textarea name="icon_svg" id="iconSvg" placeholder='粘贴 SVG 代码，例如：&#10;<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">...&lt;/svg&gt;'><%= editingCard ? editingCard.icon_svg : '' %></textarea>
+            <div class="hint">粘贴完整的 SVG 标签，viewBox="0 0 64 64" 推荐尺寸。注意：不要包含 width/height 属性，颜色用 currentColor。</div>
+          </div>
+
+          <!-- SVG 实时预览 -->
+          <% if (editingCard && editingCard.icon_svg) { %>
+          <div style="margin-bottom:18px;">
+            <label style="font-size:13px;color:var(--muted);">预览</label>
+            <div class="svg-preview <%= editingCard.icon_color %>"><%- editingCard.icon_svg %></div>
+          </div>
+          <% } %>
+
+          <div style="display:flex;gap:12px;">
+            <button type="submit" class="btn btn-primary"><%= editingCard ? '保存修改' : '添加卡片' %></button>
+            <% if (editingCard) { %>
+            <a href="/admin/cards" class="btn btn-outline">取消编辑</a>
+            <% } %>
+          </div>
+        </form>
+      </div>
+
+      <!-- 卡片列表 -->
+      <div class="panel">
+        <h2>现有卡片（<%= cards.length %>）</h2>
+        <div class="desc">点击编辑可修改任意卡片，包括更换图标。</div>
+
+        <ul class="card-list">
+          <% cards.forEach(function(card) { %>
+          <li>
+            <div class="card-icon <%= card.icon_color %>"><%- card.icon_svg %></div>
+            <span class="card-name"><%= card.title %></span>
+            <span class="card-meta">排序 <%= card.sort_order %></span>
+            <div class="card-actions">
+              <a href="/admin/cards?edit=<%= card.id %>" class="btn btn-outline btn-sm">编辑</a>
+              <form method="POST" action="/admin/cards/<%= card.id %>/delete" style="display:inline;" onsubmit="return confirm('确定删除「<%= card.title %>」吗？');">
+                <button type="submit" class="btn btn-danger btn-sm">删除</button>
+              </form>
+            </div>
+          </li>
+          <% }); %>
+        </ul>
+
+        <% if (cards.length === 0) { %>
+        <p style="text-align:center;color:var(--muted);padding:20px;">还没有卡片，使用左侧表单添加</p>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 图标预设数据
+  var iconPresets = <%- JSON.stringify(iconPresets) %>;
+
+  function loadPresetIcon(idx) {
+    if (idx === '') return;
+    var preset = iconPresets[parseInt(idx)];
+    if (preset) {
+      document.getElementById('iconSvg').value = preset.svg;
+      updatePreview();
+    }
+  }
+
+  // SVG 文本框实时预览
+  var svgTextarea = document.getElementById('iconSvg');
+
+  svgTextarea.addEventListener('input', updatePreview);
+
+  function updatePreview() {
+    var svgCode = svgTextarea.value.trim();
+    var preview = document.getElementById('svgPreview');
+    if (!preview) {
+      var container = document.createElement('div');
+      container.id = 'svgPreview';
+      container.style.cssText = 'margin-bottom:18px;';
+      container.innerHTML = '<label style="font-size:13px;color:var(--muted);">预览</label><div class="svg-preview" id="svgPreviewIcon"></div>';
+      svgTextarea.parentNode.insertBefore(container, svgTextarea.parentNode.nextElementSibling || svgTextarea.parentNode.lastChild);
+      preview = document.getElementById('svgPreviewIcon');
+    } else {
+      preview = document.getElementById('svgPreviewIcon');
+    }
+    if (preview) {
+      if (svgCode) {
+        var selectedColor = document.querySelector('input[name="icon_color"]:checked');
+        var colorClass = selectedColor ? selectedColor.value : 'blue';
+        preview.className = 'svg-preview ' + colorClass;
+        preview.innerHTML = svgCode;
+      } else {
+        preview.innerHTML = '';
+      }
+    }
+  }
+
+  // 颜色切换时更新预览
+  document.querySelectorAll('input[name="icon_color"]').forEach(function(radio) {
+    radio.addEventListener('change', updatePreview);
+  });
+
+  // 页面加载时初始预览
+  <% if (editingCard && editingCard.icon_svg) { %>
+  updatePreview();
+  <% } %>
+</script>
+</body>
+</html>

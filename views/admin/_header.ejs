@@ -1,0 +1,13 @@
+<!-- 管理后台共用顶部导航 -->
+<header class="admin-header">
+  <a href="/admin" class="brand"><%= site.site_title || '部门综合服务平台' %> · 管理后台</a>
+  <nav>
+    <a href="/admin" class="<%= current === 'dashboard' ? 'active' : '' %>">首页</a>
+    <a href="/admin/settings" class="<%= current === 'settings' ? 'active' : '' %>">网站设置</a>
+    <a href="/admin/cards" class="<%= current === 'cards' ? 'active' : '' %>">卡片管理</a>
+  </nav>
+  <div class="user-info">
+    <span><%= user.username %></span>
+    <a href="/admin/logout" class="btn btn-outline btn-sm">退出</a>
+  </div>
+</header>

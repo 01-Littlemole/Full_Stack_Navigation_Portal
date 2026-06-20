@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>管理后台 - <%= site.site_title || '部门综合服务平台' %></title>
+  <link rel="stylesheet" href="/public/admin.css" />
+</head>
+<body>
+  <%- include('_header', { current: 'dashboard' }) %>
+
+  <div class="admin-main">
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-num"><%= cardCount %></div>
+        <div class="stat-label">系统入口卡片</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">1</div>
+        <div class="stat-label">管理员</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>欢迎回来</h2>
+      <div class="desc">
+        当前登录：<strong><%= user.username %></strong>　|　可以对网站的标题和导航卡片进行管理。
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;">
+        <a href="/admin/settings" class="btn btn-primary">编辑网站设置</a>
+        <a href="/admin/cards" class="btn btn-outline">管理卡片</a>
+        <a href="/" target="_blank" class="btn btn-outline">预览前台</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

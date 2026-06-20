@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>网站设置 - 管理后台</title>
+  <link rel="stylesheet" href="/public/admin.css" />
+</head>
+<body>
+  <%- include('_header', { current: 'settings' }) %>
+
+  <div class="admin-main">
+    <div class="panel">
+      <h2>网站设置</h2>
+      <div class="desc">修改前台页面的大标题和副标题，保存后即时生效。</div>
+
+      <% if (locals.success) { %>
+      <div class="alert alert-success">设置已保存成功</div>
+      <% } %>
+
+      <form method="POST" action="/admin/settings">
+        <div class="form-group">
+          <label>大标题（顶部主标题）</label>
+          <input type="text" name="site_title" value="<%= site.site_title || '' %>" placeholder="例如：部门综合服务平台" required />
+        </div>
+        <div class="form-group">
+          <label>小标题（副标题）</label>
+          <input type="text" name="site_subtitle" value="<%= site.site_subtitle || '' %>" placeholder="例如：统一业务导航平台" required />
+        </div>
+        <button type="submit" class="btn btn-primary">保存设置</button>
+        <a href="/admin" class="btn btn-outline" style="margin-left:12px;">返回首页</a>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

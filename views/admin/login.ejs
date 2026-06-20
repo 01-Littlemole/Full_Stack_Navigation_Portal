@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>登录 - 管理后台</title>
+  <link rel="stylesheet" href="/public/admin.css" />
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 13% 18%, rgba(255,255,255,.92) 0 2.6rem, transparent 2.7rem),
+        radial-gradient(circle at 6% 47%, rgba(255,255,255,.75) 0 3.2rem, transparent 3.3rem),
+        linear-gradient(118deg, #f9fcff 0%, #eef7ff 38%, #dbeaff 100%);
+    }
+
+    .login-box {
+      width: 420px;
+      max-width: 94vw;
+      background: var(--panel);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,.78);
+      border-radius: var(--radius);
+      box-shadow: 0 24px 60px rgba(20, 57, 114, 0.12);
+      padding: 44px 40px 36px;
+    }
+
+    .login-box h2 {
+      margin: 0 0 6px;
+      font-size: 24px;
+      letter-spacing: 3px;
+      color: #0b2b68;
+      text-align: center;
+    }
+
+    .login-box .sub {
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>管理后台</h2>
+    <p class="sub">部门综合服务平台</p>
+
+    <% if (locals.error) { %>
+    <div class="alert alert-error"><%= error %></div>
+    <% } %>
+
+    <form method="POST" action="/admin/login">
+      <div class="form-group">
+        <label>账号</label>
+        <input type="text" name="username" placeholder="请输入管理员账号" required autofocus />
+      </div>
+      <div class="form-group">
+        <label>密码</label>
+        <input type="password" name="password" placeholder="请输入密码" required />
+      </div>
+      <div style="margin-top:28px;">
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">登 录</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

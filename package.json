@@ -1,0 +1,16 @@
+{
+  "name": "department-portal",
+  "version": "1.0.0",
+  "description": "部门综合服务平台 - 全栈导航门户",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^11.7.0",
+    "ejs": "^3.1.10",
+    "express": "^4.21.0",
+    "express-session": "^1.18.0"
+  }
+}
